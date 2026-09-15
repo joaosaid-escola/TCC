@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Biblioteca Virtual</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1{
+            text-align: center;
+        }
+
+        .pesquisa{
+            display: flex;
+            gap: 10px;
+            max-width: 620px;
+            margin: 0 auto 30px;
+        }
+
+        .pesquisa input{
+            flex: 1;
+            min-width: 0;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .pesquisa button{
+            border: 0;
+            background: #0066ff;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .sem-resultados{
+            text-align: center;
+            color: #475569;
+        }
+
+        .biblioteca{
+            display: grid;
+            grid-template-columns: repeat(4, 220px);
+            gap: 20px;
+            justify-content: center;
+        }
+
+        @media (max-width: 980px){
+            .biblioteca{
+                grid-template-columns: repeat(3, 220px);
+            }
+        }
+
+        @media (max-width: 740px){
+            .biblioteca{
+                grid-template-columns: repeat(2, 220px);
+            }
+        }
+
+        @media (max-width: 500px){
+            .biblioteca{
+                grid-template-columns: minmax(0, 320px);
+            }
+
+            .card{
+                width: 100%;
+            }
+        }
+
+        .card{
+            background: white;
+            width: 220px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+
+        .card:hover{
+            transform: scale(1.03);
+        }
+
+        .card img{
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+        }
+
+        .info{
+            padding: 15px;
+        }
+
+        .botao{
+            display: inline-block;
+            background: #0066ff;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>📚 Biblioteca Escolar</h1>
+
+<form class="pesquisa" method="get">
+    <input
+        type="search"
+        name="q"
+        value="{{ busca }}"
+        placeholder="Buscar por titulo, autor ou categoria"
+        aria-label="Buscar livros"
+    >
+    <button type="submit">Buscar</button>
+</form>
+
+<div class="biblioteca">
+
+{% for livro in livros %}
+
+<div class="card">
+
+    {% if livro.capa %}
+  <img src="{{ url_for('static', filename='capas/' + livro.capa) }}">
+{% else %}
+  <img src="{{ url_for('static', filename='capas/sem-capa.jpg') }}">
+{% endif %}
+    <div class="info">
+
+        <h2>{{ livro.titulo }}</h2>
+
+        <p><b>Autor:</b> {{ livro.autor }}</p>
+
+        <p><b>Categoria:</b> {{ livro.categoria }}</p>
+
+        <a class="botao" href="/pdfs/{{ livro.pdf }}">
+            Ler Livro
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+{% if not livros %}
+<p class="sem-resultados">Nenhum livro encontrado{% if busca %} para "{{ busca }}"{% endif %}.</p>
+{% endif %}
+
+</div>
+
+</body>
+</html>
