@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Administrar biblioteca</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 24px; color: #1e293b; }
+        main { max-width: 900px; margin: auto; }
+        .topo, .acoes { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .painel, .livro { background: white; padding: 20px; margin: 16px 0; border-radius: 12px; box-shadow: 0 3px 10px #0001; }
+        label { display: block; margin-top: 14px; font-weight: bold; }
+        input { box-sizing: border-box; width: 100%; margin-top: 6px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 7px; }
+        button, .botao { padding: 10px 14px; border: 0; border-radius: 7px; color: white; background: #0066ff; text-decoration: none; cursor: pointer; }
+        .remover { background: #dc2626; }
+        .mensagem { padding: 10px; border-radius: 6px; background: #dcfce7; color: #166534; }
+        .erro { background: #fee2e2; color: #991b1b; }
+        .livro { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+        .livro h3, .livro p { margin: 4px 0; }
+        @media (max-width: 560px) { .topo, .livro { align-items: flex-start; flex-direction: column; } }
+    </style>
+</head>
+<body>
+<main>
+    <header class="topo">
+        <h1>Administrar biblioteca</h1>
+        <div class="acoes">
+            <a class="botao" href="{{ url_for('inicio') }}">Ver biblioteca</a>
+            <form method="post" action="{{ url_for('logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit">Sair</button>
+            </form>
+        </div>
+    </header>
+
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensagem in mensagens %}<p class="mensagem {{ 'erro' if categoria == 'erro' else '' }}">{{ mensagem }}</p>{% endfor %}
+    {% endwith %}
+
+    <section class="painel">
+        <h2>Adicionar livro</h2>
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label for="titulo">Título</label>
+            <input id="titulo" name="titulo" required maxlength="200">
+            <label for="autor">Autor</label>
+            <input id="autor" name="autor" required maxlength="200">
+            <label for="categoria">Categoria</label>
+            <input id="categoria" name="categoria" required maxlength="100">
+            <label for="pdf">Arquivo do livro (PDF, até 32 MB)</label>
+            <input id="pdf" name="pdf" type="file" accept="application/pdf,.pdf" required>
+            <label for="capa">Capa (opcional: JPG, PNG ou WebP)</label>
+            <input id="capa" name="capa" type="file" accept="image/jpeg,image/png,image/webp">
+            <button type="submit" style="margin-top: 18px">Adicionar livro</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Livros cadastrados ({{ livros|length }})</h2>
+        {% for livro in livros %}
+            <article class="livro">
+                <div><h3>{{ livro.titulo }}</h3><p>{{ livro.autor }} · {{ livro.categoria }}</p></div>
+                <form method="post" action="{{ url_for('remover_livro', id_livro=livro.id) }}" onsubmit="return confirm('Remover este livro da biblioteca?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button class="remover" type="submit">Remover</button>
+                </form>
+            </article>
+        {% else %}
+            <p>Nenhum livro cadastrado.</p>
+        {% endfor %}
+    </section>
+</main>
+</body>
+</html>

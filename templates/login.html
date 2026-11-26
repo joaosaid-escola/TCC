@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login do administrador</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 24px; }
+        main { max-width: 380px; margin: 8vh auto; padding: 28px; background: white; border-radius: 14px; box-shadow: 0 4px 16px #0002; }
+        label { display: block; margin-top: 16px; font-weight: bold; }
+        input { box-sizing: border-box; width: 100%; margin-top: 6px; padding: 11px; border: 1px solid #cbd5e1; border-radius: 7px; }
+        button, .link { display: inline-block; margin-top: 20px; padding: 11px 16px; border: 0; border-radius: 7px; background: #0066ff; color: white; text-decoration: none; cursor: pointer; }
+        .mensagem { padding: 10px; border-radius: 6px; background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Área administrativa</h1>
+    {% with mensagens = get_flashed_messages() %}
+        {% for mensagem in mensagens %}<p class="mensagem">{{ mensagem }}</p>{% endfor %}
+    {% endwith %}
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <label for="usuario">Usuário</label>
+        <input id="usuario" name="usuario" autocomplete="username" required>
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+        <button type="submit">Entrar</button>
+    </form>
+    <a class="link" href="{{ url_for('inicio') }}">Voltar à biblioteca</a>
+</main>
+</body>
+</html>

@@ -116,6 +116,14 @@
 
 <body>
 
+<p style="text-align: center; margin-top: -10px;">
+    {% if administrador_logado %}
+        <a href="{{ url_for('admin') }}">Administrar livros</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Login do administrador</a>
+    {% endif %}
+</p>
+
 <h1>📚 Biblioteca Escolar</h1>
 
 <form class="pesquisa" method="get">
@@ -148,7 +156,7 @@
 
         <p><b>Categoria:</b> {{ livro.categoria }}</p>
 
-        <a class="botao" href="/pdfs/{{ livro.pdf }}">
+        <a class="botao" href="{{ url_for('abrir_pdf', nome_pdf=livro.pdf) }}" target="_blank" rel="noopener">
             Ler Livro
         </a>
 
